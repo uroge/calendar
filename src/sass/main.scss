@@ -2,6 +2,8 @@
 @import "./base/variables";
 @import "./base/base";
 
+@import "./components/modal";
+
 .main {
     padding: 4rem 0;
     width: 60%;
@@ -100,7 +102,7 @@
         width: 14.28%;
         padding: 1rem;
         height: 10rem;
-        cursor: pointer;
+        // cursor: pointer;
         box-sizing: border-box;
         background-color: $color-primary-light1;
         box-shadow: 0px 0px 3px $color-primary;
@@ -108,22 +110,50 @@
         flex-direction: column;
         justify-content: space-between;
         transition: all .5s;
+        position: relative;
 
         &:hover {
-            background-color: $color-primary;
-            box-shadow: 0px 0px 3px $color-black;
-            border: 1px solid $color-primary-light3;
-            transform: scale(1.02);
+            background-color: $color-primary-light3;
         }
 
         &:active,
         &:visited {
             transform: scale(1);
         }
+
+        &:hover > .main__new-event{
+            display: block!important;
+        }
     }   
 
     &__day-passive {
         background-color: $color-primary-light2;
+    }
+
+    &__new-event {
+        display: none!important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        color: $color-black;
+        transition: all .4s;
+        border-radius: 100%;
+        cursor: pointer;
+
+        &:hover {
+            color: $color-black;
+            cursor: pointer;
+            font-size: 2.2rem;
+            box-shadow: 1px 2px 21px 4px rgba(0,0,0,0.63);
+        }
+
+        &:active,
+        &:visited {
+            box-shadow: 1px 2px 21px 4px rgba(0,0,0,0.8);
+            font-size: 2rem;
+        }
     }
 }
 

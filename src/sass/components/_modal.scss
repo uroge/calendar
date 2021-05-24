@@ -1,0 +1,90 @@
+.modal {
+    position: fixed;
+    z-index: 5;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    overflow: auto; 
+    background-color: $color-black; 
+    background-color: rgba($color-black,0.4);
+
+    &__content {
+        background-color: $color-grey-light;
+        margin: 15% auto; 
+        padding: 2rem 3rem;
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        font-weight: bold;
+        position: relative;
+    }
+
+    &__title {
+        color: $color-primary;
+        margin-bottom: 2rem;
+    }
+
+    &__label {
+        color: $color-primary;
+        font-size: 2rem;
+        margin-bottom: .8rem;
+    }
+
+    &__input {
+        padding: .5rem;
+        border: 2px solid $color-primary;
+        margin-bottom: 1.5rem;
+        &:focus,
+        &:active {
+            border: 2px solid $color-primary-light1;
+            outline: none;
+        }
+    }
+
+    &__close-btn {
+        color: $color-primary;
+        padding: .8rem;
+        background-color: $color-black;
+        border: none;
+        transition: all .5s;
+        position: absolute;
+        top: 15%;
+        right: 5%;
+
+        &:hover,
+        &:focus {
+            color: $color-black;
+            text-decoration: none;
+            background-color: $color-secondary-dark;
+            cursor: pointer;
+        }
+    }
+
+    &__save-btn {
+        padding: .8rem 2.1rem;
+        background-color: $color-primary;
+        border: none;
+        cursor: pointer;
+        color: $color-white;
+        margin-left: auto;
+
+        &:hover{
+            color: $color-black;
+            text-decoration: none;
+            background-color: $color-primary-light1;
+            cursor: pointer;
+            transform: scale(1.1);
+            box-shadow: 1px 2px 21px 4px rgba($color-black, 0.2);
+            transition: all .4s;
+        }
+
+        &:visited,
+        &:active {
+            transform: scale(1);
+            box-shadow: 1px 2px 21px 4px rgba($color-black, 0.4);
+        }
+    }
+}
