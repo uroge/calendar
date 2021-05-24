@@ -155,6 +155,21 @@
             font-size: 2rem;
         }
     }
+
+    &__event-holder {
+        font-size: 10px;
+        padding: 3px;
+        background-color: $color-tertiary;
+        color: $color-white;
+        max-height: 90%;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all .4s;
+
+        &:hover {
+            background-color: $color-secondary-dark;
+        }
+    }
 }
 
 .current-day {

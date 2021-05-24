@@ -11,7 +11,9 @@ import Modal from './modal';
         modalTitle = document.querySelector('.js-modal__title'),
         modalSaveButton = document.querySelector('.js-modal__save'),
         modalCloseButton = document.querySelector('.js-modal__close'),
-        modalInput = document.getElementById('eventTitleInput');
+        modalInput = document.getElementById('eventTitleInput'),
+        eventStartInput = document.getElementById('eventFrom'),
+        eventEndInput = document.getElementById('eventTo');
 
     let currentMonth = 0,
         clicked = null,
@@ -61,17 +63,31 @@ import Modal from './modal';
             const dayElement = document.createElement('div');
             dayElement.classList.add('main__day');
             const dayHolder = document.createElement('p');
+            const eventHolder = document.createElement('div');
+            eventHolder.classList.add('main__event-holder');
             const newEventIcon = document.createElement('i');
             newEventIcon.classList.add('fas', 'fa-plus-circle', 'main__new-event');
+
+            const currentDayString = `${i - passiveDays}/${month + 1}/${year}`;
 
             if(i > passiveDays) {
                 dayElement.appendChild(dayHolder);
                 dayHolder.innerText = i - passiveDays;
-                dayElement.appendChild(newEventIcon);
+                
+
+                const eventForDay = events.find(event => event.date === currentDayString);
+
+                if(eventForDay) {
+                    // eventHolder.textContent = (i - passiveDays) - day;
+                    eventHolder.textContent = eventForDay.title;
+                    dayElement.appendChild(eventHolder);
+                } else {
+                    dayElement.appendChild(newEventIcon);
+                }
 
                 if(newEventIcon) {
                     newEventIcon.addEventListener('click', () => {
-                        openModal(`${i - passiveDays}/${month + 1}/${year}`)
+                        openModal(currentDayString);
                     });
                 }
 
@@ -89,13 +105,15 @@ import Modal from './modal';
         }
     };
 
-
     /**
      * Function that opens modal
+     * @param date - day which was clicked
     */
     const openModal = (date) => {
+        
         clicked = date;
 
+        eventStartInput.value = clicked;
         const eventForDay = events.find(event => event.date === clicked);
 
         if(eventForDay) {
@@ -105,19 +123,35 @@ import Modal from './modal';
         }
     };
 
+    /**
+     * Function that saves event to local storage
+    */
     const saveEvent = () => {
-        if(modalInput.value) {
-            modalInput.classList.remove('error');
-            if(!events.find(event => event.date === clicked)){
-                events.push({
-                    date: clicked,
-                    title: modalInput.value
-                });
+        if(modalInput && eventEndInput && eventStartInput) {
+            if(modalInput.value && eventEndInput.value && eventStartInput.value) {
+                modalInput.classList.remove('error');
+                if(!events.find(event => event.date === clicked)){
+                    events.push({
+                        date: clicked,
+                        title: modalInput.value,
+                        start: clicked,
+                        end: eventEndInput.value
+                    });
+    
+                    localStorage.setItem('events', JSON.stringify(events));
+                    closeModal();
+                    calculateCalendar();
+                }
+                console.log(events);
+            } else {
+                modalInput.classList.add('error');
             }
-            console.log(events);
-        } else {
-            modalInput.classList.add('error');
         }
+    };
+
+    const closeModal = () => {
+        modalInput.classList.remove('error');
+        newEventModal.closeModal();
     };
 
     /**
@@ -152,8 +186,7 @@ import Modal from './modal';
         */
         if(modalCloseButton) {
             modalCloseButton.addEventListener('click', () => {
-                modalInput.classList.remove('error');
-                newEventModal.closeModal();
+                closeModal();
             });
         }
 
