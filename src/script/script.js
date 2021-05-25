@@ -13,14 +13,19 @@ import Modal from './modal';
         modalCloseButton = document.querySelector('.js-modal__close'),
         modalInput = document.getElementById('eventTitleInput'),
         eventStartInput = document.getElementById('eventFrom'),
-        eventEndInput = document.getElementById('eventTo');
+        eventEndInput = document.getElementById('eventTo'),
+        searchDateButton = document.querySelector('.js-search__button'),
+        searchDatePicker = document.getElementById('datepicker'),
+        date = new Date(),
+        today = date.getDate(),
+        thisMonth = date.getMonth(),
+        thisYear = date.getFullYear();
 
     let currentMonth = 0,
         clicked = null,
         events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [],
         updateEventModal = new Modal(modalElement, true, false, modalTitle),
         newEventModal = new Modal(modalElement, false, true, modalTitle);
-
 
     document.body.addEventListener('click', event => {
         let target = event.target;
@@ -67,21 +72,37 @@ import Modal from './modal';
             eventHolder.classList.add('main__event-holder');
             const newEventIcon = document.createElement('i');
             newEventIcon.classList.add('fas', 'fa-plus-circle', 'main__new-event');
+            const daysUntilEvent = document.createElement('p');
+            daysUntilEvent.classList.add('main__day-counter');
 
-            const currentDayString = `${i - passiveDays}/${month + 1}/${year}`;
+            const currentDayString = '';
+            
+            if((i-passiveDays) < 10 && month + 1 < 10) {
+                currentDayString = `${year}-0${month + 1}-0${i - passiveDays}`;
+            } else if ((i-passiveDays) < 10) {
+                currentDayString = `${year}-${month + 1}-0${i - passiveDays}`;
+            } else if (month + 1 < 10) {
+                currentDayString = `${year}-0${month + 1}-${i - passiveDays}`;
+            } else {
+                currentDayString = `${year}-${month + 1}-${i - passiveDays}`;
+            }
+            
 
             if(i > passiveDays) {
                 dayElement.appendChild(dayHolder);
                 dayHolder.innerText = i - passiveDays;
-                
 
-                const eventForDay = events.find(event => event.date === currentDayString);
+                const eventForDay = events.find(event => currentDayString >= event.start &&  currentDayString <= event.end);
+                const daysFromToday = Math.floor((
+                    (new Date(currentDayString).getTime() - new Date(thisYear, thisMonth, today).getTime())
+                    / (1000 * 3600 * 24)));
 
                 if(eventForDay) {
-                    // eventHolder.textContent = (i - passiveDays) - day;
+                    daysUntilEvent.textContent = `Event in ${daysFromToday} days`;
+                    dayElement.appendChild(daysUntilEvent);
                     eventHolder.textContent = eventForDay.title;
                     dayElement.appendChild(eventHolder);
-                } else {
+                } else if(daysFromToday > 0){
                     dayElement.appendChild(newEventIcon);
                 }
 
@@ -159,6 +180,22 @@ import Modal from './modal';
      * buttons on the page
     */
     const initButtons = () => {
+        if(searchDateButton && searchDatePicker) {
+            searchDateButton.addEventListener('click', () => {
+                const pickedMonth = new Date(searchDatePicker.value).getMonth();
+                const pickedYear = new Date(searchDatePicker.value).getFullYear();
+
+                if(pickedYear !== thisYear) {
+                    currentMonth = (pickedYear - thisYear) * (pickedMonth - thisMonth);
+                } else {
+                    currentMonth = (pickedMonth - thisMonth);
+                }
+                
+                console.log(currentMonth)
+                calculateCalendar();
+            });
+        }
+
         /**
          * Function that increments month by 1
          * and recalculates calendar

@@ -23,19 +23,19 @@
     }
 
     &__title {
-        color: $color-primary;
+        color: $color-primary-dark;
         margin-bottom: 2rem;
     }
 
     &__label {
-        color: $color-primary;
+        color: $color-primary-dark;
         font-size: 2rem;
         margin-bottom: .8rem;
     }
 
     &__input {
         padding: .5rem;
-        border: 2px solid $color-primary;
+        border: 2px solid $color-primary-dark;
         margin-bottom: 1.5rem;
         &:focus,
         &:active {
@@ -45,7 +45,7 @@
     }
 
     &__close-btn {
-        color: $color-primary;
+        color: $color-primary-dark;
         padding: .8rem;
         background-color: $color-black;
         border: none;
@@ -65,7 +65,7 @@
 
     &__save-btn {
         padding: .8rem 2.1rem;
-        background-color: $color-primary;
+        background-color: $color-primary-dark;
         border: none;
         cursor: pointer;
         color: $color-white;

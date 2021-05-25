@@ -5,12 +5,10 @@ export default class Modal {
         this.isNewEvent = isNewEvent;
         this.title = title;
 
-        console.log(isUpdate);
         if(this.isUpdate) {
             this.title ? this.title.textContent = 'Update Event' : null;
         }
 
-        console.log(isNewEvent);
         if(this.isNewEvent) {
             this.title ? this.title.textContent = 'New Event' : null;
         }

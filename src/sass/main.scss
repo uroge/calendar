@@ -14,26 +14,26 @@
         margin-bottom: 3rem;
         display: flex;
         justify-content: center;
+    }
 
-        &-button {
-            background-color: $color-white;
-            padding: .5rem 2rem;
-            text-decoration: none;
-            text-transform: uppercase;
-            color: $color-black;
-            margin-left: 1.8rem;
-            transition: all .4s;
+    &__search-button {
+        background-color: $color-white;
+        padding: .5rem 2rem;
+        text-decoration: none;
+        text-transform: uppercase;
+        color: $color-black;
+        margin-left: 1.8rem;
+        transition: all .4s;
 
-            &:hover {
-                transform: scale(1.1);
-                box-shadow: 1px 2px 21px 4px rgba(0,0,0,0.2);
-            }
+        &:hover {
+            transform: scale(1.1);
+            box-shadow: 1px 2px 21px 4px rgba(0,0,0,0.2);
+        }
 
-            &:visited,
-            &:active {
-                transform: scale(1);
-                box-shadow: 1px 2px 21px 4px rgba(0,0,0,0.4);
-            }
+        &:visited,
+        &:active {
+            transform: scale(1);
+            box-shadow: 1px 2px 21px 4px rgba(0,0,0,0.4);
         }
     }
 
@@ -105,7 +105,7 @@
         // cursor: pointer;
         box-sizing: border-box;
         background-color: $color-primary-light1;
-        box-shadow: 0px 0px 3px $color-primary;
+        box-shadow: 0px 0px 3px $color-primary-dark;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -169,6 +169,10 @@
         &:hover {
             background-color: $color-secondary-dark;
         }
+    }
+
+    &__day-counter {
+        font-size: 1.2rem;
     }
 }
 
