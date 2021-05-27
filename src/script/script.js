@@ -24,16 +24,17 @@ import Modal from './modal';
     let currentMonth = 0,
         clicked = null,
         events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [],
-        updateEventModal = new Modal(modalElement, true, false, modalTitle),
-        newEventModal = new Modal(modalElement, false, true, modalTitle);
+        newEventModal = new Modal(modalElement, modalTitle);
 
-    document.body.addEventListener('click', event => {
-        let target = event.target;
-
-        if(target.classList.contains('main__new-event')) {
-            // openModal();
+    /**
+    * Function that set's modal title to
+    * Update Event when modal is in update mode
+    */
+    const updateEvent = () => {
+        if(modalTitle) {
+            modalTitle.textContent = 'Update Event';
         }
-    });
+    };
 
     /**
      * A function that calculates current day, month and year
@@ -86,7 +87,6 @@ import Modal from './modal';
             } else {
                 currentDayString = `${year}-${month + 1}-${i - passiveDays}`;
             }
-            
 
             if(i > passiveDays) {
                 dayElement.appendChild(dayHolder);
@@ -98,7 +98,16 @@ import Modal from './modal';
                     / (1000 * 3600 * 24)));
 
                 if(eventForDay) {
-                    daysUntilEvent.textContent = `Event in ${daysFromToday} days`;
+                    if(daysFromToday === 0) {
+                        daysUntilEvent.textContent = `Today`;
+                    } else if (daysFromToday < 0) {
+                        daysUntilEvent.textContent = `Event has passed`;
+                    } else if (daysFromToday === 1) {
+                        daysUntilEvent.textContent = `Event in ${daysFromToday} day`;
+                    } else {
+                        daysUntilEvent.textContent = `Event in ${daysFromToday} days`;
+                    }
+                    
                     dayElement.appendChild(daysUntilEvent);
                     eventHolder.textContent = eventForDay.title;
                     dayElement.appendChild(eventHolder);
@@ -109,6 +118,12 @@ import Modal from './modal';
                 if(newEventIcon) {
                     newEventIcon.addEventListener('click', () => {
                         openModal(currentDayString);
+                    });
+                }
+
+                if(eventHolder) {
+                    eventHolder.addEventListener('click', () => {
+                        openModal(currentDayString, updateEvent);
                     });
                 }
 
@@ -129,18 +144,40 @@ import Modal from './modal';
     /**
      * Function that opens modal
      * @param date - day which was clicked
+     * @param updateEvent - callback function that sets modal to update mode
     */
-    const openModal = (date) => {
-        
-        clicked = date;
+    const openModal = (date, updateEvent) => {
+        if(updateEvent) {
+            updateEvent();
+            clicked = date; 
 
-        eventStartInput.value = clicked;
-        const eventForDay = events.find(event => event.date === clicked);
-
-        if(eventForDay) {
-            console.log('Event already exists');
+            eventStartInput.value = clicked;
+            eventStartInput.disabled = false;
+            const eventForDay = events.find(event => event.start <= clicked && event.end >= clicked);
+            modalInput.value = eventForDay.title;
+            
+            eventEndInput.value = eventForDay.end;
+            
+            if(eventForDay) {
+                newEventModal.showModal();
+            } else {
+                console.log('No events')
+            }
         } else {
-            newEventModal.showModal();
+            clicked = date; 
+
+            eventStartInput.value = clicked;
+            modalTitle.textContent = 'New Event';
+            eventStartInput.disabled = true;
+
+            eventStartInput.value = clicked;
+            const eventForDay = events.find(event => event.date === clicked);
+    
+            if(eventForDay) {
+                console.log('Event already exists');
+            } else {
+                newEventModal.showModal();
+            }
         }
     };
 
@@ -151,11 +188,25 @@ import Modal from './modal';
         if(modalInput && eventEndInput && eventStartInput) {
             if(modalInput.value && eventEndInput.value && eventStartInput.value) {
                 modalInput.classList.remove('error');
-                if(!events.find(event => event.date === clicked)){
+                if(!events.find(event => event.start <= clicked && event.end >= clicked)){
+                    console.log('nema event');
                     events.push({
                         date: clicked,
                         title: modalInput.value,
-                        start: clicked,
+                        start: eventStartInput.value,
+                        end: eventEndInput.value
+                    });
+    
+                    localStorage.setItem('events', JSON.stringify(events));
+                    closeModal();
+                    calculateCalendar();
+                } else {
+                    events.splice(events.indexOf(events.find(event => event.start <= clicked && event.end >= clicked)), 1);
+
+                    events.push({
+                        date: clicked,
+                        title: modalInput.value,
+                        start: eventStartInput.value,
                         end: eventEndInput.value
                     });
     
@@ -163,13 +214,16 @@ import Modal from './modal';
                     closeModal();
                     calculateCalendar();
                 }
-                console.log(events);
             } else {
                 modalInput.classList.add('error');
+                eventEndInput.classList.add('error');
             }
         }
     };
 
+    /**
+     * Function that closes modal when inputs are saved
+    */
     const closeModal = () => {
         modalInput.classList.remove('error');
         newEventModal.closeModal();
@@ -182,17 +236,25 @@ import Modal from './modal';
     const initButtons = () => {
         if(searchDateButton && searchDatePicker) {
             searchDateButton.addEventListener('click', () => {
-                const pickedMonth = new Date(searchDatePicker.value).getMonth();
-                const pickedYear = new Date(searchDatePicker.value).getFullYear();
-
-                if(pickedYear !== thisYear) {
-                    currentMonth = (pickedYear - thisYear) * (pickedMonth - thisMonth);
-                } else {
-                    currentMonth = (pickedMonth - thisMonth);
+                if(searchDatePicker.value) {
+                    const pickedMonth = new Date(searchDatePicker.value).getMonth();
+                    const pickedYear = new Date(searchDatePicker.value).getFullYear();
+    
+                    if(pickedYear !== thisYear) {
+                        if(pickedYear < thisYear) {
+                            currentMonth = (thisYear * -12) + (pickedMonth - thisMonth);
+                        } else {
+                            currentMonth = (thisYear * 12) + (pickedMonth - thisMonth);
+                        }
+                        
+                    } else {
+                        currentMonth = (pickedMonth - thisMonth);
+                    }
+                    
+                    console.log(currentMonth)
+                    calculateCalendar();
                 }
                 
-                console.log(currentMonth)
-                calculateCalendar();
             });
         }
 
