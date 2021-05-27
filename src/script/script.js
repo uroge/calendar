@@ -151,13 +151,13 @@ import Modal from './modal';
             updateEvent();
             clicked = date; 
 
-            eventStartInput.value = clicked;
+            
             eventStartInput.disabled = false;
             const eventForDay = events.find(event => event.start <= clicked && event.end >= clicked);
             modalInput.value = eventForDay.title;
             
             eventEndInput.value = eventForDay.end;
-            
+            eventStartInput.value = eventForDay.start;
             if(eventForDay) {
                 newEventModal.showModal();
             } else {
@@ -234,6 +234,7 @@ import Modal from './modal';
      * buttons on the page
     */
     const initButtons = () => {
+        const date = new Date();
         if(searchDateButton && searchDatePicker) {
             searchDateButton.addEventListener('click', () => {
                 if(searchDatePicker.value) {
@@ -242,9 +243,9 @@ import Modal from './modal';
     
                     if(pickedYear !== thisYear) {
                         if(pickedYear < thisYear) {
-                            currentMonth = (thisYear * -12) + (pickedMonth - thisMonth);
+                            currentMonth = -12 + (pickedMonth - thisMonth);
                         } else {
-                            currentMonth = (thisYear * 12) + (pickedMonth - thisMonth);
+                            currentMonth = 12 + (pickedMonth - thisMonth);
                         }
                         
                     } else {
