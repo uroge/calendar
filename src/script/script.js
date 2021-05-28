@@ -63,7 +63,9 @@ import Modal from './modal';
             mainHeader.textContent = `${date.toLocaleDateString('en-GB', {month: 'long'})} ${year}`;   
         }
 
-        calendar.innerHTML = '';
+        if(calendar) {
+            calendar.innerHTML = '';
+        }
 
         for(let i = 1; i <= passiveDays + daysInMonth; i++) {
             const dayElement = document.createElement('div');
@@ -147,37 +149,32 @@ import Modal from './modal';
      * @param updateEvent - callback function that sets modal to update mode
     */
     const openModal = (date, updateEvent) => {
-        if(updateEvent) {
-            updateEvent();
-            clicked = date; 
-
-            
-            eventStartInput.disabled = false;
-            const eventForDay = events.find(event => event.start <= clicked && event.end >= clicked);
-            modalInput.value = eventForDay.title;
-            
-            eventEndInput.value = eventForDay.end;
-            eventStartInput.value = eventForDay.start;
-            if(eventForDay) {
-                newEventModal.showModal();
-            } else {
-                console.log('No events')
-            }
-        } else {
-            clicked = date; 
-
-            eventStartInput.value = clicked;
-            modalTitle.textContent = 'New Event';
-            eventStartInput.disabled = true;
-
-            eventStartInput.value = clicked;
-            const eventForDay = events.find(event => event.date === clicked);
+        if(eventStartInput && modalInput && eventEndInput && modalTitle) {
+            if(updateEvent) {
+                updateEvent();
+                clicked = date; 
     
-            if(eventForDay) {
-                console.log('Event already exists');
+               
+                eventStartInput.disabled = false;
+                const eventForDay = events.find(event => event.start <= clicked && event.end >= clicked);
+                modalInput.value = eventForDay.title;
+                
+                eventEndInput.value = eventForDay.end;
+                eventStartInput.value = eventForDay.start;
+                if(eventForDay) {
+                    newEventModal.showModal();
+                }
             } else {
+                clicked = date; 
+    
+                eventStartInput.value = clicked;
+                modalTitle.textContent = 'New Event';
+                eventStartInput.disabled = true;
+    
+                eventStartInput.value = clicked;
+        
                 newEventModal.showModal();
-            }
+            }  
         }
     };
 
@@ -225,8 +222,10 @@ import Modal from './modal';
      * Function that closes modal when inputs are saved
     */
     const closeModal = () => {
-        modalInput.classList.remove('error');
-        newEventModal.closeModal();
+        if(modalInput && newEventModal) {
+            modalInput.classList.remove('error');
+            newEventModal.closeModal();
+        }
     };
 
     /**
@@ -234,7 +233,6 @@ import Modal from './modal';
      * buttons on the page
     */
     const initButtons = () => {
-        const date = new Date();
         if(searchDateButton && searchDatePicker) {
             searchDateButton.addEventListener('click', () => {
                 if(searchDatePicker.value) {
@@ -242,17 +240,11 @@ import Modal from './modal';
                     const pickedYear = new Date(searchDatePicker.value).getFullYear();
     
                     if(pickedYear !== thisYear) {
-                        if(pickedYear < thisYear) {
-                            currentMonth = -12 + (pickedMonth - thisMonth);
-                        } else {
-                            currentMonth = 12 + (pickedMonth - thisMonth);
-                        }
-                        
+                        currentMonth = ((thisYear - pickedYear) * -12) + (pickedMonth - thisMonth);
                     } else {
                         currentMonth = (pickedMonth - thisMonth);
                     }
                     
-                    console.log(currentMonth)
                     calculateCalendar();
                 }
                 
